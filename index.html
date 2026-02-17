@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Retreat List Generator</title>
+    <style>
+        :root{--accent:#2563eb}
+        body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; max-width: 980px; margin: 24px auto; padding: 0 16px; color:#111 }
+        header { display: flex; align-items: baseline; gap: 12px; justify-content:space-between }
+        h1 { margin:0; font-size:1.4rem }
+        small { color:#444 }
+        input[type=number] { width: 80px; }
+        .controls { display:flex; gap:12px; flex-wrap:wrap; margin:12px 0 18px; }
+        .panel { border:1px solid #eee; padding:12px; border-radius:8px; background:#fff }
+        #results { margin-top:18px; }
+        pre { background:#f8f8f8; padding:12px; border-radius:6px; overflow:auto; }
+        table { border-collapse:collapse; width:100%; }
+        td,th { border:1px solid #f0f0f0; padding:6px; text-align:left; }
+        button { background:var(--accent); color:white; border:none; padding:8px 10px; border-radius:6px; cursor:pointer }
+        button.secondary { background:#6b7280 }
+        .muted { color:#555 }
+        .flex { display:flex; gap:12px; align-items:center }
+        #dropZone { padding:12px; border:2px dashed #e7e7e7; border-radius:6px; text-align:center; background:#fbfdff }
+        .small-note { font-size:0.9rem; color:#555 }
+        .result-controls { margin-top:8px }
+        .toast { position:fixed; right:18px; bottom:18px; background:#111; color:white; padding:10px 14px; border-radius:8px; opacity:0.95 }
+        @media print { button, input, a { display:none } .panel { border:none } }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div>
+            <h1>Retreat List Generator</h1>
+            <small>Import your CSV and generate cabins, bandanas, and bus groupings.</small>
+        </div>
+        <div class="flex">
+            <a href="README.md" class="muted">README</a>
+        </div>
+    </header>
+
+    <section class="panel">
+        <div id="dropZone">
+            <strong>Import CSV</strong>
+            <div style="margin-top:8px" class="small-note">Drag & drop your CSV file here (or choose below).</div>
+            <div style="margin-top:8px"><input id="fileInput" type="file" accept="text/csv" /></div>
+            <div style="margin-top:8px" class="flex"><button id="loadSampleBtn" class="secondary">Load sample CSV</button><span class="small-note">or download sample: <a href="sample.csv" download>sample.csv</a></span></div>
+            <p style="margin:8px 0 0" class="small-note">CSV columns: <code>name,school,gender</code>. Header row optional. Accepted genders: <em>male</em>, <em>female</em>, <em>gender neutral</em>.</p>
+        </div>
+    </section>
+
+    <section class="panel controls">
+        <div>
+            <label>Male cabins: <input id="maleCabinsInput" type="number" min="0" value="3" /></label>
+        </div>
+        <div>
+            <label>Female cabins: <input id="femaleCabinsInput" type="number" min="0" value="3" /></label>
+        </div>
+        <div>
+            <label>Gender-neutral cabins: <input id="neutralCabinsInput" type="number" min="0" value="2" /></label>
+        </div>
+        <div>
+            <label>Bandana groups: <input id="bandanasInput" type="number" min="1" value="8" /></label>
+        </div>
+        <div>
+            <label>Buses: <input id="busesInput" type="number" min="1" value="2" /></label>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-left:auto">
+            <button id="generateBtn" disabled>Generate</button>
+            <button id="downloadBtn" disabled class="secondary">Download results (JSON)</button>
+            <button id="printBtn" class="secondary">Print view</button>
+        </div>
+                <div style="display:flex;align-items:center;gap:8px;margin-left:8px">
+                        <label class="small-note">Sort master by: 
+                            <select id="sortSelect">
+                                <option value="none">None</option>
+                                <option value="name" selected>Name</option>
+                                <option value="bandana">Bandana</option>
+                                <option value="cabin">Cabin</option>
+                                <option value="bus">Bus</option>
+                            </select>
+                        </label>
+                </div>
+    </section>
+
+    <section id="results" class="panel">
+        <h2>Preview</h2>
+        <div id="summary" class="small-note">No students loaded.</div>
+        <div id="output"></div>
+    </section>
+
+    <div id="toast" style="display:none" class="toast"></div>
+        <section class="panel">
+            <h2>Mega CSV Preview</h2>
+            <div class="small-note">This is the combined CSV (Name, School, Gender, Bandana, Cabin, Bus). You can copy or download it.</div>
+            <div style="margin-top:8px; display:flex; gap:8px; align-items:center">
+                <button id="copyMegaBtn">Copy mega CSV</button>
+                <button id="downloadMegaBtn" class="secondary">Download mega CSV</button>
+            </div>
+            <textarea id="megaPreview" style="width:100%;height:220px;margin-top:8px;font-family:monospace;padding:8px" readonly></textarea>
+        </section>
+
+    <script src="app.js"></script>
+</body>
+</html>
